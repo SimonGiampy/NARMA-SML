@@ -1,4 +1,4 @@
-from metrics import base
+from river.metrics import base
 
 __all__ = ["CohenKappaTemporal"]
 
@@ -24,37 +24,22 @@ class CohenKappaTemporal(base.MultiClassMetric):
         matrix between multiple metrics. Sharing a confusion matrix reduces the amount of storage
         and computation time.
 
-    Examples
-    --------
-
-    >>> from river import metrics
-
-    >>> y_true = ['cat', 'ant', 'cat', 'cat', 'ant', 'bird']
-    >>> y_pred = ['ant', 'ant', 'cat', 'cat', 'ant', 'cat']
-
-    >>> metric = metrics.CohenKappa()
-
-    >>> for yt, yp in zip(y_true, y_pred):
-    ...     metric = metric.update(yt, yp)
-
-    >>> metric
-    CohenKappa: 42.86%
-
-    References
-    ----------
-    [^1]: J. Cohen (1960). "A coefficient of agreement for nominal scales". Educational and Psychological Measurement 20(1):37-46. doi:10.1177/001316446002000104.
-
     """
 
     def get(self):
 
         try:
-            p0 = self.cm.total_true_positives / self.cm.n_samples  # same as accuracy
+            p0 = (self.cm.total_true_positives + self.cm.total_true_negatives) / self.cm.n_samples  # same as accuracy
         except ZeroDivisionError:
             p0 = 0
 
         if self.cm.n_samples != 0:
-            pe = self.cm.correct_no_change / self.cm.n_samples
+            pe = (
+                (self.cm.total_true_positives + self.cm.total_false_negatives)
+                * (self.cm.total_true_positives + self.cm.total_false_positives)
+                + (self.cm.total_true_negatives + self.cm.total_false_negatives)
+                * (self.cm.total_true_negatives + self.cm.total_false_positives)
+            ) / (self.cm.n_samples ** 2)
         else:
             pe = 0
 
