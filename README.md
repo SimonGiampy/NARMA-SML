@@ -1,19 +1,27 @@
-## NARMA - SML
+## Non-Linear ARMA time series classification with Streaming Machine Learning model classifiers
 
-Narma project
+Author: Simone Giampà, Politecnico di Milano, AY: 2022-2023
+
+University project for the course *Streaming Data Analytics*
+
+Non-linear ARMA time series dataset generation in the notebook:
+
+Streaming Machine Learning models for binary classification of the generated datasets in the notebook:
+
+Characteristics of the datasets:
+- no_drift: this dataset presents the non linear ARMA time series without any addition of concept drift
+- drift_features: this dataset adds a concept drift in the definition of the features over time, changing the formulas for the single time series and the correlation between the variables
+- drift_labels: this dataset adds a concept drift in the definition of the binary labeling function, changing its values and dependency from the features over time
 
 
-temporal dependence data with binary classification from 5 features, 1 binary label, 20000 length
+[River](https://riverml.xyz/0.15.0/) machine learning library is used for the streaming machine learning tasks. It provides models and the possibility of training them online. The learning process follows the paradigm for which the model learns from one sample at a time, for the entire duration of the time series, while retaining relatively high classification accuracy during the entire duration of the training.
 
-data generator river -> datasets -> synth
+Metrics employed
 
-implement arima or narma model of high order
+temporal augmentation of the models
 
-create 2 or 3 similar datasets
+implementation summary details and expected outcomes, considerations about the concept drift
 
-temporal dependence between past labels and some features
-
-create concept drift in the mechanism for assigning labels or in function generator
 
 evaluate:
 - temporal correlation in every feature x and label y, through features and labels
@@ -32,18 +40,3 @@ temporal augmentation = add past labels in SML classification with different ord
 
 apply prequential evaluation with SML models
 
-
-Professor notes:
-
-Di seguito trovi l’elenco riassuntivo per il progetto:
-
-- Creazione di dati con dipendenza temporale, utilizza i processi tipici delle time series ARMA, NARMA, ARIMA (sono sufficienti 5 features) per un problema di classificazione binaria
-- Deve esserci dipendenza temporale tra le singole features (ogni feature dev'essere una time series) non è richiesta correlazione tra features diverse, ma volendo puoi sperimentare
-- Deve esserci una correlazione significativa tra l'etichetta y attuale e le etichette y nel passato, e anche tra l'etichetta y attuale e le feature nel passato (esempio di funzione y = moda(....))
-- Per ogni dataset creato (2/3) inserisci almeno un concept drift, puoi ispirarti a come vengono creati i drift nei dati SEA su river (cambia il modo di combinare le features oppure l’ordine all’interno dei processi ARIMA/NARMA di generazione dati)
-  
-- Presenta i plot della ACF/PACF delle singole features, la correlazione tra le y e le y passate e feature passate (puoi utilizzare anche altri metodi per valutare la significatività di una feature per la label)
-- Testa i dati creati comparando HAT, ARF con i rispettivi modelli con la Temporal Augmentation (scenario di classificazione come visto a lezione) 
-- Utilizza come metriche di comparazione la Kappa Statistics e la Kappa Temporal
-
-Ti allego poi il codice del TemporallyAugmentedClassifier, lo usi come i modelli di classificazione di river. Gli unici due parametri sono: base_learner, che rappresenta il modello su cui fare l’augmentation (HAT o ARF), e num_old_labels che indica quante label nel passato considerare nell’augmentation. Infine trovi il codice della Kappa Temporal da usare come metrica aggiuntiva alla Kappa Statistics nella valutazione finale.
